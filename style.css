@@ -6,13 +6,15 @@
 body {
     font-family: "Montserrat", sans-serif;
     margin: 0;
-    background-color: #f71582;
+    background: url(images/background.jpeg);
     color: #fff;
     overflow: hidden;
 }
 
 .main {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     height: 100vh;
     padding: 0.5rem;
 }
@@ -21,12 +23,61 @@ h1 {
     margin-top: 2rem;
 }
 
+.logo {
+    height: 80px;
+    width: 100px;
+    border-radius: 30%;
+}
+
 .header {
     position: fixed;
-    height: 8rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
     width: 100%;
-    border: 1px solid black;
     text-align: center;
     font-size: 2rem;
-    background-color: cadetblue;
+    border-bottom: 5px #1d6b1c solid;
+    background-color: rgb(30, 26, 26);
+}
+
+.container {
+    margin-top: 8rem;
+    height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.game {
+    height: 60vmin;
+    width: 60vmin;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5vmin;
+}
+
+.box {
+    height: 18vmin;
+    width: 18vmin;
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.4);
+    font-size: 8vmin;
+    color: #074173;
+}
+
+#reset-btn {
+    margin-top: 2rem;
+    padding: 1rem;
+    font-size: 1.25em;
+    background-color: #1d6b1c;
+    color: #fff;
+    border-radius: 1rem;
+    font-weight: bolder;
+    border: none;
 }
