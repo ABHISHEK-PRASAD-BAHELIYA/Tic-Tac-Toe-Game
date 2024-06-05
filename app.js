@@ -1,105 +1,75 @@
-const modeScreen = document.getElementById('mode-screen');
-const sideScreen = document.getElementById('side-screen');
-const gameScreen = document.getElementById('game-screen');
+let boxes = document.querySelectorAll(".box");
+let resetBtn = document.querySelector("#reset-btn");
+let newBtn = document.querySelector(".new-btn");
+let msgContainer = document.querySelector(".msg-container");
+let msgPara = document.querySelector("#msg");
 
-const playAIButton = document.getElementById('play-ai');
-const playFriendButton = document.getElementById('play-friend');
-const chooseOButton = document.getElementById('choose-o');
-const chooseXButton = document.getElementById('choose-x');
-const restartButton = document.getElementById('restart');
-const endGameButton = document.getElementById('end-game');
+let turno = true; //playerX, playerO
 
-const board = document.getElementById('board');
-const cells = document.querySelectorAll('[data-cell]');
-const scoreboard = document.querySelector('.scoreboard');
+const winPatterns = [
+    [0, 1, 2],
+    [0, 3, 6],
+    [0, 4, 8],
+    [1, 4, 7],
+    [2, 4, 8],
+    [2, 4, 6],
+    [3, 4, 5],
+    [6, 7, 8]
+];
 
-let currentPlayer = 'O';
-let gameActive = true;
-let boardState = ['', '', '', '', '', '', '', '', ''];
-
-playAIButton.addEventListener('click', () => {
-    modeScreen.classList.remove('active');
-    sideScreen.classList.add('active');
-});
-
-playFriendButton.addEventListener('click', () => {
-    modeScreen.classList.remove('active');
-    sideScreen.classList.add('active');
-});
-
-chooseOButton.addEventListener('click', () => {
-    startGame('O');
-});
-
-chooseXButton.addEventListener('click', () => {
-    startGame('X');
-});
-
-restartButton.addEventListener('click', restartGame);
-endGameButton.addEventListener('click', endGame);
-
-cells.forEach(cell => {
-    cell.addEventListener('click', handleCellClick);
-});
-
-function startGame(player) {
-    currentPlayer = player;
-    sideScreen.classList.remove('active');
-    gameScreen.classList.add('active');
-    updateScoreboard();
+const resetGame = () => {
+ turno = true;
+ enableBoxes();
+ msgContainer.classList.add("hide");   
 }
 
-function handleCellClick(event) {
-    const cell = event.target;
-    const cellIndex = Array.from(cells).indexOf(cell);
+boxes.forEach((box) => {
+    box.addEventListener("click", () => {
+        if(turno) {
+            box.innerText = "O";
+            turno = false;
+        } else {
+            box.innerText = "X";
+            turno = true;
+        }
+        box.disabled = true;
 
-    if (boardState[cellIndex] !== '' || !gameActive) return;
-
-    boardState[cellIndex] = currentPlayer;
-    cell.textContent = currentPlayer;
-
-    if (checkWin()) {
-        gameActive = false;
-        setTimeout(() => alert(${currentPlayer} wins!), 100);
-    } else if (boardState.every(cell => cell !== '')) {
-        gameActive = false;
-        setTimeout(() => alert(It's a draw!), 100);
-    } else {
-        currentPlayer = currentPlayer === 'O' ? 'X' : 'O';
-        updateScoreboard();
-    }
-}
-
-function checkWin() {
-    const winPatterns = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
-    ];
-
-    return winPatterns.some(pattern => {
-        return pattern.every(index => boardState[index] === currentPlayer);
+        checkWinner();
     });
+});
+
+const disableBoxes = () => {
+    for(let box of boxes) {
+        box.disabled = true;
+    }
+};
+
+const enableBoxes = () => {
+    for(let box of boxes) {
+        box.disabled = false;
+        box.innerText = "";
+    }
+};
+
+const showWinner = (Winner) => {
+    msg.innerText = `Congratulations, Winner is ${Winner}`;
+    msgContainer.classList.remove("hide");
+    disableBoxes(); 
 }
 
-function restartGame() {
-    currentPlayer = 'O';
-    gameActive = true;
-    boardState.fill('');
-    cells.forEach(cell => cell.textContent = '');
-    updateScoreboard();
-}
+const checkWinner = () => {
+    for(let pattern of winPatterns) {
+        let pos1Val = boxes[pattern[0]].innerText;
+        let pos2Val = boxes[pattern[1]].innerText;
+        let pos3Val = boxes[pattern[2]].innerText;
 
-function endGame() {
-    gameScreen.classList.remove('active');
-    modeScreen.classList.add('active');
-    restartGame();
-}
+        if(pos1Val != "" && pos2Val != "" && pos3Val != "") {
+            if(pos1Val === pos2Val && pos2Val === pos3Val) {
+                showWinner(pos1Val);
+            }
+        }
+    }
+};
 
-function updateScoreboard() {
-    scoreboard.children[0].textContent = currentPlayer === 'O' ? 'You (O)' : 'You (X)';
-    scoreboard.children[1].textContent = currentPlayer === 'O' ? 'AI (X)' : 'AI (O)';
-}
-
-// Start the game in mode selection screen
-modeScreen.classList.add('active');
+newBtn.addEventListener("click", resetGame);
+resetBtn.addEventListener("click", resetGame);
